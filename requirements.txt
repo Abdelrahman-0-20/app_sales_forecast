@@ -1,0 +1,14 @@
+# Dependencies for the four standalone Streamlit apps.
+# Tested versions are pinned with >= so newer compatible releases also work.
+streamlit>=1.40
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+plotly>=5.18
+scipy>=1.10
+requests>=2.28
+
+# Optional: enables the richer Prophet forecast in app_sales_forecast.py.
+# If Prophet is not installed, the app automatically falls back to a
+# scipy-based exponential-smoothing forecast — no code changes needed.
+prophet>=1.1
