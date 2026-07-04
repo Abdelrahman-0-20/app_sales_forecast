@@ -490,7 +490,7 @@ def main() -> None:
     st.markdown("---")
 
     # --- Forecast --------------
-    st.subheader("🔮 Revenue Forecast")
+    st.subheader(" Revenue Forecast")
     fc = make_forecast(daily, controls["horizon"])
     st.plotly_chart(plot_forecast(daily, fc), use_container_width=True)
 
@@ -500,7 +500,7 @@ def main() -> None:
     f2.metric("Avg forecast / day", f"${forecast_total / controls['horizon']:,.0f}")
     f3.metric("Forecast engine", fc["method"])
 
-    with st.expander("🔎 Preview the cleaned dataset"):
+    with st.expander(" Preview the cleaned dataset"):
         st.dataframe(filtered.head(100), use_container_width=True)
         st.caption(f"Showing 100 of {len(filtered):,} filtered rows.")
 
