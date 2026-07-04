@@ -39,12 +39,12 @@ try:
 except Exception:  # pragma: no cover - environment dependent
     PROPHET_AVAILABLE = False
 
-# --------------------------------------------------------------------------- #
+# - #
 # Page configuration                                                          #
-# --------------------------------------------------------------------------- #
+# - #
 st.set_page_config(
     page_title="Sales KPI Dashboard & Forecast",
-    page_icon="📈",
+    page_icon="",
     layout="wide",
 )
 
@@ -58,9 +58,9 @@ CATEGORIES = {
 }
 
 
-# --------------------------------------------------------------------------- #
+# - #
 # 1. Synthetic data generation                                                #
-# --------------------------------------------------------------------------- #
+# - #
 @st.cache_data(show_spinner="Generating synthetic sales history…")
 def generate_sales_data(n_days: int = 760, seed: int = 7) -> pd.DataFrame:
     """Create a daily sales table spanning ``n_days`` ending today.
@@ -136,9 +136,9 @@ def generate_sales_data(n_days: int = 760, seed: int = 7) -> pd.DataFrame:
     return data
 
 
-# --------------------------------------------------------------------------- #
+# - #
 # 2. Data cleaning                                                            #
-# --------------------------------------------------------------------------- #
+# - #
 @st.cache_data(show_spinner="Cleaning sales data…")
 def clean_sales_data(raw: pd.DataFrame) -> pd.DataFrame:
     """Clean the raw sales table with transparent, commented steps.
@@ -176,9 +176,9 @@ def clean_sales_data(raw: pd.DataFrame) -> pd.DataFrame:
     return df.sort_values("date").reset_index(drop=True)
 
 
-# --------------------------------------------------------------------------- #
+# - #
 # 3. Forecasting                                                              #
-# --------------------------------------------------------------------------- #
+# - #
 def _exponential_smoothing_forecast(
     series: pd.Series, horizon: int
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -270,7 +270,7 @@ def make_forecast(daily: pd.DataFrame, horizon: int = 30) -> dict:
             # Any Prophet runtime failure quietly drops to the fallback below.
             pass
 
-    # ---- scipy fallback -----------------------------------------------------
+    # ---- scipy fallback -------
     forecast, _ = _exponential_smoothing_forecast(history["y"], horizon)
     # Build a simple +/- confidence band from the historical residual std.
     resid_std = float(history["y"].diff().std())
@@ -283,9 +283,9 @@ def make_forecast(daily: pd.DataFrame, horizon: int = 30) -> dict:
     }
 
 
-# --------------------------------------------------------------------------- #
+# - #
 # 4. Plotly helpers                                                           #
-# --------------------------------------------------------------------------- #
+# - #
 def plot_history(daily: pd.DataFrame) -> go.Figure:
     """Line chart of total daily revenue with a 30-day moving average."""
     daily = daily.sort_values("date")
@@ -387,12 +387,12 @@ def plot_weekday_profile(filtered: pd.DataFrame) -> go.Figure:
     return fig
 
 
-# --------------------------------------------------------------------------- #
+# - #
 # 5. Sidebar controls                                                         #
-# --------------------------------------------------------------------------- #
+# - #
 def build_sidebar(clean: pd.DataFrame) -> dict:
     """Render the sidebar filters and return the chosen values."""
-    st.sidebar.header("🔧 Filters")
+    st.sidebar.header(" Filters")
 
     min_date = clean["date"].min().date()
     max_date = clean["date"].max().date()
@@ -438,12 +438,12 @@ def apply_filters(clean: pd.DataFrame, controls: dict) -> pd.DataFrame:
     return df
 
 
-# --------------------------------------------------------------------------- #
+# - #
 # 6. Main application body                                                     #
-# --------------------------------------------------------------------------- #
+# - #
 def main() -> None:
     """Assemble the full dashboard."""
-    st.title("📈 Sales KPI Dashboard & 30-Day Forecast")
+    st.title(" Sales KPI Dashboard & 30-Day Forecast")
     st.markdown(
         "Explore two years of synthetic multi-category sales data and project "
         "the next month of revenue."
@@ -458,7 +458,7 @@ def main() -> None:
         st.warning("No data matches the current filters. Widen your selection.")
         st.stop()
 
-    # --- KPIs ----------------------------------------------------------------
+    # --- KPIs ------------------
     daily = filtered.groupby("date", as_index=False).agg(
         revenue=("revenue", "sum"),
         profit=("profit", "sum"),
@@ -477,8 +477,8 @@ def main() -> None:
 
     st.markdown("---")
 
-    # --- Historical time series ----------------------------------------------
-    st.subheader("🕒 Historical Performance")
+    # --- Historical time series 
+    st.subheader(" Historical Performance")
     st.plotly_chart(plot_history(daily), use_container_width=True)
 
     cat_col, week_col = st.columns(2)
@@ -489,7 +489,7 @@ def main() -> None:
 
     st.markdown("---")
 
-    # --- Forecast ------------------------------------------------------------
+    # --- Forecast --------------
     st.subheader("🔮 Revenue Forecast")
     fc = make_forecast(daily, controls["horizon"])
     st.plotly_chart(plot_forecast(daily, fc), use_container_width=True)
